@@ -1,0 +1,158 @@
+<!--This is a simple form validation project using concepts from DOM-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Form Validation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial; background: #f5f5f5; padding: 40px; }
+    .form-container { background: white; max-width: 400px; margin: 0 auto; padding: 30px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 3px; font-family: Arial; }
+    input:focus, textarea:focus { outline: none; border-color: #4CAF50; }
+    
+    .error-message { color: #f44336; font-size: 12px; margin-top: 5px; display: none; }
+    .form-group.error input, .form-group.error textarea { border-color: #f44336; }
+    .form-group.error .error-message { display: block; }
+    
+    .success-message { color: #4CAF50; font-size: 12px; margin-top: 5px; display: none; }
+    .form-group.success input { border-color: #4CAF50; }
+    .form-group.success .success-message { display: block; }
+    
+    button { width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 3px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Sign Up Form</h2>
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name"
+          data-minlength="3"
+          data-maxlength="50"
+          required
+        >
+        <span class="error-message">Name must be 3-50 characters</span>
+        <span class="success-message">✓</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          required
+        >
+        <span class="error-message">Please enter a valid email</span>
+        <span class="success-message">✓</span>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone:</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          name="phone"
+          pattern="[0-9\-\+\(\)\s]+"
+          data-minlength="10"
+        >
+        <span class="error-message">Please enter a valid phone number</span>
+        <span class="success-message">✓</span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          data-minlength="8"
+          required
+        >
+        <span class="error-message">Password must be at least 8 characters</span>
+        <span class="success-message">✓</span>
+      </div>
+
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.querySelector('#signupForm');
+    const inputs = form.querySelectorAll('input');
+
+    // Validate on input
+    inputs.forEach(input => {
+      input.addEventListener('blur', () => validateField(input));
+      input.addEventListener('input', () => validateField(input));
+    });
+
+    // Validate on submit
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      let isValid = true;
+      inputs.forEach(input => {
+        if (!validateField(input)) {
+          isValid = false;
+        }
+      });
+
+      if (isValid) {
+        alert('Form submitted successfully!');
+        form.reset();
+      }
+    });
+
+    function validateField(field) {
+      const group = field.closest('.form-group');
+      let isValid = true;
+
+      // Check required
+      if (field.hasAttribute('required') && !field.value.trim()) {
+        isValid = false;
+      }
+
+      // Check minlength
+      const minlength = field.getAttribute('data-minlength');
+      if (minlength && field.value.length < minlength) {
+        isValid = false;
+      }
+
+      // Check maxlength
+      const maxlength = field.getAttribute('data-maxlength');
+      if (maxlength && field.value.length > maxlength) {
+        isValid = false;
+      }
+
+      // Check email
+      if (field.type === 'email' && field.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        isValid = emailRegex.test(field.value);
+      }
+
+      // Check pattern
+      const pattern = field.getAttribute('pattern');
+      if (pattern && field.value) {
+        isValid = new RegExp(pattern).test(field.value);
+      }
+
+      // Update UI
+      group.classList.remove('error', 'success');
+      if (field.value.trim()) {
+        group.classList.add(isValid ? 'success' : 'error');
+      }
+
+      return isValid;
+    }
+  </script>
+</body>
+</html>
