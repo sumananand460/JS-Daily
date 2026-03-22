@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Mini Project</title>
+</head>
+<body>
+    <h1>Shopping List</h1>
+
+    <input type="text" id="itemInput" placeholder="Enter item">
+    <button id="addBtn">Add Item</button>
+
+    <ul id="itemList"></ul>
+</body>
+<script>
+    const input = document.getElementById("itemInput");
+const addBtn = document.getElementById("addBtn");
+const list = document.getElementById("itemList");
+
+addBtn.addEventListener("click", function () {
+  
+  const value = input.value;
+
+  if (value === "") return;
+
+  const li = document.createElement("li");
+  li.textContent = value;
+
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "Delete";
+
+  delBtn.addEventListener("click", function () {
+    li.remove();
+  });
+
+  li.appendChild(delBtn);
+  list.appendChild(li);
+
+  input.value = "";
+});
+</script>
+</html>
