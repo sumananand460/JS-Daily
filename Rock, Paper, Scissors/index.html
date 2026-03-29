@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Rock Paper Scissors</title>
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary-bg: #2c3e50;
+            --accent-color: #ecf0f1;
+            --rock-color: #e74c3c;
+            --paper-color: #3498db;
+            --scissors-color: #f1c40f;
+            --dark-bg: #1a252f;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--accent-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            background: var(--dark-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .result-text {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            height: 30px; /* Prevents layout jump */
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .choice {
+            background: none;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .choice:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Specific Button Colors */
+        #rock { border-color: var(--rock-color); }
+        #paper { border-color: var(--paper-color); }
+        #scissors { border-color: var(--scissors-color); }
+
+        .choice img {
+            width: 60px;
+            height: 60px;
+        }
+
+        #reset-btn {
+            margin-top: 30px;
+            padding: 10px 25px;
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #reset-btn:hover {
+            background: var(--accent-color);
+            color: var(--dark-bg);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .choice img {
+                width: 45px;
+                height: 45px;
+            }
+            .score-board {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Rock Paper Scissors</h1>
+        
+        <div class="score-board">
+            <div>Player: <span id="player-score">0</span></div>
+            <div>Computer: <span id="computer-score">0</span></div>
+        </div>
+
+        <div class="result-text" id="status">Make your move!</div>
+
+        <div class="choices">
+            <button class="choice" id="rock">
+                <img src="https://img.icons8.com/color/96/rock.png" alt="Rock">
+            </button>
+            <button class="choice" id="paper">
+                <img src="https://img.icons8.com/color/96/paper.png" alt="Paper">
+            </button>
+            <button class="choice" id="scissors">
+                <img src="https://img.icons8.com/color/96/scissors.png" alt="Scissors">
+            </button>
+        </div>
+
+        <button id="reset-btn">Reset Game</button>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        let pScore = 0;
+        let cScore = 0;
+
+        const playerDisplay = document.getElementById('player-score');
+        const computerDisplay = document.getElementById('computer-score');
+        const statusText = document.getElementById('status');
+        const choices = document.querySelectorAll('.choice');
+        const resetBtn = document.getElementById('reset-btn');
+
+        const computerOptions = ['rock', 'paper', 'scissors'];
+
+        choices.forEach(choice => {
+            choice.addEventListener('click', function() {
+                const playerChoice = this.id;
+                const computerIndex = Math.floor(Math.random() * 3);
+                const computerChoice = computerOptions[computerIndex];
+
+                compareHands(playerChoice, computerChoice);
+                updateScore();
+            });
+        });
+
+        function compareHands(player, computer) {
+            if (player === computer) {
+                statusText.innerText = `It's a tie! You both chose ${player}.`;
+                return;
+            }
+
+            // Rock logic
+            if (player === 'rock') {
+                if (computer === 'scissors') {
+                    statusText.innerText = "You Win! Rock smashes Scissors.";
+                    pScore++;
+                } else {
+                    statusText.innerText = "You Lose! Paper covers Rock.";
+                    cScore++;
+                }
+            }
+            // Paper logic
+            else if (player === 'paper') {
+                if (computer === 'rock') {
+                    statusText.innerText = "You Win! Paper covers Rock.";
+                    pScore++;
+                } else {
+                    statusText.innerText = "You Lose! Scissors cut Paper.";
+                    cScore++;
+                }
+            }
+            // Scissors logic
+            else if (player === 'scissors') {
+                if (computer === 'paper') {
+                    statusText.innerText = "You Win! Scissors cut Paper.";
+                    pScore++;
+                } else {
+                    statusText.innerText = "You Lose! Rock smashes Scissors.";
+                    cScore++;
+                }
+            }
+        }
+
+        function updateScore() {
+            playerDisplay.innerText = pScore;
+            computerDisplay.innerText = cScore;
+        }
+
+        resetBtn.addEventListener('click', () => {
+            pScore = 0;
+            cScore = 0;
+            updateScore();
+            statusText.innerText = "Game Reset. Make your move!";
+        });
+    </script>
+</body>
+</html>
